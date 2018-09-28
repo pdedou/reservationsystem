@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "org.hcmr.reservationsystem",
+      "nativeLanguage": "el"
+    },
+    "jhipsterVersion": "5.3.4",
+    "applicationType": "monolith",
+    "baseName": "reservationsystem",
+    "packageName": "org.hcmr.reservationsystem",
+    "packageFolder": "org/hcmr/reservationsystem",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "NDQ5NDQxMGE5YTM4MTI0OTgzOTRkMWRkN2NhMTFjYTMwOTcyNjE4MWRhYjZhZTNlM2I2ZGJjN2FlYmQwMGMzYTkyNGIxOTliN2Y2ZDIyMDVjMmQ1YTkwZDdiMmYwMDFjMzJmOWMyNzk3OGVhM2U5YjViNGMyMjQxMmU5NjQ5M2Q=",
+    "clientFramework": "angularX",
+    "useSass": false,
+    "clientPackageManager": "npm",
+    "testFrameworks": [
+      "cucumber"
+    ],
+    "jhiPrefix": "jhi",
+    "enableTranslation": true,
+    "nativeLanguage": "el",
+    "languages": [
+      "el",
+      "en"
+    ]
+  }
+}
