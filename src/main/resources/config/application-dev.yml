@@ -36,8 +36,8 @@ spring:
     datasource:
         type: com.zaxxer.hikari.HikariDataSource
         url: jdbc:postgresql://localhost:5432/reservationsystem
-        username: reservationsystem
-        password:
+        username: postgres
+        password: postgres
         hikari:
             auto-commit: false
     jpa:
