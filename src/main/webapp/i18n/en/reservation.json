@@ -1,0 +1,28 @@
+
+{
+    "reservationsystemApp": {
+        "reservation" : {
+            "home": {
+                "title": "Reservations",
+                "createLabel": "Create a new Reservation",
+                "createOrEditLabel": "Create or edit a Reservation",
+                "search": "Search for Reservation"
+            },
+            "created": "A new Reservation is created with identifier {{ param }}",
+            "updated": "A Reservation is updated with identifier {{ param }}",
+            "deleted": "A Reservation is deleted with identifier {{ param }}",
+            "delete": {
+                "question": "Are you sure you want to delete Reservation {{ id }}?"
+            },
+            "detail": {
+                "title": "Reservation"
+            },
+            "reservationEntryUser": "Reservation Entry User",
+            "reservationEntryTimestamp": "Reservation Entry Timestamp",
+            "reservationUser": "Reservation User",
+            "reservationStartTimestamp": "Reservation Start Timestamp",
+            "reservationEndTimestamp": "Reservation End Timestamp",
+            "reservationItem": "Reservation Item"
+        }
+    }
+}

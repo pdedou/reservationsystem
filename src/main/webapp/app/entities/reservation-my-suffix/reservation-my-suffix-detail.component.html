@@ -1,0 +1,49 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="reservation">
+            <h2><span jhiTranslate="reservationsystemApp.reservation.detail.title">Reservation</span> {{reservation.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryUser">Reservation Entry User</span></dt>
+                <dd>
+                    <span>{{reservation.reservationEntryUser}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryTimestamp">Reservation Entry Timestamp</span></dt>
+                <dd>
+                    <span>{{reservation.reservationEntryTimestamp}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationUser">Reservation User</span></dt>
+                <dd>
+                    <span>{{reservation.reservationUser}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationStartTimestamp">Reservation Start Timestamp</span></dt>
+                <dd>
+                    <span>{{reservation.reservationStartTimestamp}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEndTimestamp">Reservation End Timestamp</span></dt>
+                <dd>
+                    <span>{{reservation.reservationEndTimestamp}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationItem">Reservation Item</span></dt>
+                <dd>
+                    <span *ngFor="let reservationItem of reservation.reservationItems; let last = last">
+                        <a [routerLink]="['/reservation-item-my-suffix', reservationItem?.id, 'view' ]">{{reservationItem.id}}</a>{{last ? '' : ', '}}
+                    </span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/reservation-my-suffix', reservation.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

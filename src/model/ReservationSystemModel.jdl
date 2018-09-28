@@ -1,0 +1,30 @@
+entity Reservation
+{
+    reservationEntryUser String,
+	reservationEntryTimestamp Instant,
+    reservationUser String,
+    reservationStartTimestamp Instant,
+    reservationEndTimestamp Instant  
+}
+
+entity ReservationItem
+{
+	reservationItemName String required
+}
+
+relationship ManyToMany {
+	Reservation{reservationItem} to ReservationItem{reservation}
+}
+
+paginate Reservation, ReservationItem with infinite-scroll
+
+// It is disabled because of failed to parse id on elasticsearch issue
+filter Reservation, ReservationItem
+
+// It is disabled because it will aggregate the bidirectional one-to-many relationships, only using the ID and not the object.
+//dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+// Set an angular suffix
+angularSuffix * with mySuffix

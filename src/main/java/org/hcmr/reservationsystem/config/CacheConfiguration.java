@@ -38,6 +38,10 @@ public class CacheConfiguration {
             cm.createCache(org.hcmr.reservationsystem.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(org.hcmr.reservationsystem.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(org.hcmr.reservationsystem.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(org.hcmr.reservationsystem.domain.Reservation.class.getName(), jcacheConfiguration);
+            cm.createCache(org.hcmr.reservationsystem.domain.Reservation.class.getName() + ".reservationItems", jcacheConfiguration);
+            cm.createCache(org.hcmr.reservationsystem.domain.ReservationItem.class.getName(), jcacheConfiguration);
+            cm.createCache(org.hcmr.reservationsystem.domain.ReservationItem.class.getName() + ".reservations", jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

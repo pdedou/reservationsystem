@@ -1,0 +1,24 @@
+
+{
+    "reservationsystemApp": {
+        "reservationItem" : {
+            "home": {
+                "title": "Reservation Items",
+                "createLabel": "Δημιουργήστε ένα νέο Reservation Item",
+                "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Reservation Item",
+                "search": "Αναζήτηση για Reservation Item"
+            },
+            "created": "Ένα νέο Reservation Item έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+            "updated": "Ένα Reservation Item έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+            "deleted": "Ένα Reservation Item έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+            "delete": {
+                "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Reservation Item {{ id }};"
+            },
+            "detail": {
+                "title": "Reservation Item"
+            },
+            "reservationItemName": "Reservation Item Name",
+            "reservation": "Reservation"
+        }
+    }
+}
