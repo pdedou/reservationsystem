@@ -205,31 +205,53 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
     this.refresh.next();
     }
 
+    populateCalendar() {
+      const monthEnd = endOfMonth(this.viewDate);
+//      const month = format(monthEnd, 'YYYY-MM');
+
+        this.reservations.forEach((item) => {
+          const value = item.reservationUser + item.reservationStartTimestamp + item.reservationEndTimestamp;
+          this.events.push({
+            start: item.reservationStartTimestamp.toDate(),
+            end: item.reservationEndTimestamp.toDate(),
+            title: 'An event with no end date',
+            color: colors.yellow,
+            actions: this.actions
+          });
+
+        });
+        this.refresh.next();
+    }
+
     loadAll() {
-        if (this.currentSearch) {
-            this.reservationService
-                .search({
-                    query: this.currentSearch,
-                    page: this.page,
-                    size: this.itemsPerPage,
-                    sort: this.sort()
-                })
-                .subscribe(
-                    (res: HttpResponse<IReservationMySuffix[]>) => this.paginateReservations(res.body, res.headers),
-                    (res: HttpErrorResponse) => this.onError(res.message)
-                );
-            return;
-        }
+      if (this.currentSearch) {
         this.reservationService
-            .query({
-                page: this.page,
-                size: this.itemsPerPage,
-                sort: this.sort()
-            })
-            .subscribe(
-                (res: HttpResponse<IReservationMySuffix[]>) => this.paginateReservations(res.body, res.headers),
-                (res: HttpErrorResponse) => this.onError(res.message)
-            );
+          .search({
+            query: this.currentSearch,
+            page: this.page,
+            size: this.itemsPerPage
+          })
+          .subscribe(
+          (res: HttpResponse<IReservationMySuffix[]>) => {
+            this.paginateReservations(res.body, res.headers);
+            this.populateCalendar();
+          },
+          (res: HttpErrorResponse) => this.onError(res.message)
+          );
+        return;
+      }
+      this.reservationService
+        .query({
+          page: this.page,
+          size: this.itemsPerPage
+        })
+        .subscribe(
+        (res: HttpResponse<IReservationMySuffix[]>) => {
+            this.paginateReservations(res.body, res.headers);
+            this.populateCalendar();
+          },
+        (res: HttpErrorResponse) => this.onError(res.message)
+        );
     }
 
     reset() {
