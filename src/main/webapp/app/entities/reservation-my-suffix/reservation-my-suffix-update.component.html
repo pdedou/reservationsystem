@@ -18,8 +18,9 @@
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="reservationsystemApp.reservation.reservationUser" for="field_reservationUser">Reservation User</label>
-                    <input type="text" class="form-control" name="reservationUser" id="field_reservationUser"
-                        [(ngModel)]="reservation.reservationUser" />
+                    <select class="form-control" id="field_reservationUser" name="reservationUser" [(ngModel)]="reservation.reservationUser" >
+		                <option [ngValue]="user.lastName === reservation.reservationUser ? reservation.reservationUser : user.lastName" *ngFor="let user of users; trackBy: trackIdentity">{{user.lastName}}</option>
+		            </select>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="reservationsystemApp.reservation.reservationStartTimestamp" for="field_reservationStartTimestamp">Reservation Start Timestamp</label>

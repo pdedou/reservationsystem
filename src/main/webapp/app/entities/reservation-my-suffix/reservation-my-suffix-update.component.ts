@@ -4,12 +4,14 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 import { DATE_TIME_FORMAT } from 'app/shared/constants/input.constants';
-import { JhiAlertService } from 'ng-jhipster';
+import { JhiAlertService, JhiParseLinks } from 'ng-jhipster';
 
 import { IReservationMySuffix } from 'app/shared/model/reservation-my-suffix.model';
 import { ReservationMySuffixService } from './reservation-my-suffix.service';
 import { IReservationItemMySuffix } from 'app/shared/model/reservation-item-my-suffix.model';
 import { ReservationItemMySuffixService } from 'app/entities/reservation-item-my-suffix';
+import { Principal, User, UserService } from '../../core';
+import { ITEMS_PER_PAGE } from '../../shared';
 
 @Component({
     selector: 'jhi-reservation-my-suffix-update',
@@ -18,6 +20,14 @@ import { ReservationItemMySuffixService } from 'app/entities/reservation-item-my
 export class ReservationMySuffixUpdateComponent implements OnInit {
     private _reservation: IReservationMySuffix;
     isSaving: boolean;
+
+    currentAccount: any;
+    users: User[];
+    links: any;
+    totalItems: any;
+    queryCount: any;
+    predicate: any;
+    reverse: any;
 
     reservationitems: IReservationItemMySuffix[];
     reservationStartTimestamp: string;
@@ -28,7 +38,10 @@ export class ReservationMySuffixUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private reservationService: ReservationMySuffixService,
         private reservationItemService: ReservationItemMySuffixService,
-        private activatedRoute: ActivatedRoute
+        private activatedRoute: ActivatedRoute,
+        private userService: UserService,
+        private principal: Principal,
+        private parseLinks: JhiParseLinks
     ) {}
 
     ngOnInit() {
@@ -42,6 +55,7 @@ export class ReservationMySuffixUpdateComponent implements OnInit {
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
+      this.loadAll();
     }
 
     previousState() {
@@ -58,6 +72,35 @@ export class ReservationMySuffixUpdateComponent implements OnInit {
         } else {
             this.subscribeToSaveResponse(this.reservationService.create(this.reservation));
         }
+    }
+
+    loadAll() {
+        this.userService.query({
+            page: 0,
+            size: 1000,
+            sort: ['id,asc']}).subscribe(
+                (res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers),
+                (res: HttpResponse<any>) => this.onError(res.body)
+        );
+    }
+
+    sort() {
+        const result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
+        if (this.predicate !== 'id') {
+            result.push('id');
+        }
+        return result;
+    }
+
+    trackIdentity(index, item: User) {
+        return item.id;
+    }
+
+    private onSuccess(data, headers) {
+        this.links = this.parseLinks.parse(headers.get('link'));
+        this.totalItems = headers.get('X-Total-Count');
+        this.queryCount = this.totalItems;
+        this.users = data;
     }
 
     private subscribeToSaveResponse(result: Observable<HttpResponse<IReservationMySuffix>>) {
