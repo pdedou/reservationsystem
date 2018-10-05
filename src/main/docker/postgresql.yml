@@ -1,11 +1,12 @@
 version: '2'
 services:
     reservationsystem-postgresql:
-        image: postgres:10.4
-        # volumes:
-        #     - ~/volumes/jhipster/reservationsystem/postgresql/:/var/lib/postgresql/data/
+        image: postgres:10.5
+        restart: always
+        volumes:
+            - ./postgresql-data:/var/lib/postgresql/data/
         environment:
-            - POSTGRES_USER=reservationsystem
-            - POSTGRES_PASSWORD=
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
         ports:
             - 5432:5432
