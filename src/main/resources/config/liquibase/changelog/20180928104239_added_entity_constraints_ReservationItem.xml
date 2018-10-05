@@ -4,15 +4,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <!--
-        Added the constraints for entity Reservation.
+        Added the constraints for entity ReservationItem.
     -->
-    <changeSet id="20180928104238-2" author="jhipster">
+    <changeSet id="20180928104239-2" author="jhipster">
         
-        <addForeignKeyConstraint baseColumnNames="reservation_item_id"
-                                 baseTableName="reservation"
-                                 constraintName="fk_reservation_reservation_item_id"
+        <addForeignKeyConstraint baseColumnNames="reservation_id"
+                                 baseTableName="reservation_item"
+                                 constraintName="fk_reservation_item_reservation_id"
                                  referencedColumnNames="id"
-                                 referencedTableName="reservation_item"/>
+                                 referencedTableName="reservation"/>
 
     </changeSet>
 </databaseChangeLog>

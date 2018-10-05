@@ -3,22 +3,22 @@
     "reservationsystemApp": {
         "reservationItem" : {
             "home": {
-                "title": "Reservation Items",
-                "createLabel": "Δημιουργήστε ένα νέο Reservation Item",
-                "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Reservation Item",
-                "search": "Αναζήτηση για Reservation Item"
+                "title": "Αντικείμενα",
+                "createLabel": "Δημιουργήστε ένα νέο Αντικείμενο",
+                "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Αντικείμενο",
+                "search": "Αναζήτηση για Αντικείμενο"
             },
-            "created": "Ένα νέο Reservation Item έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
-            "updated": "Ένα Reservation Item έχει ενημερωθεί με αναγνωριστικό {{ param }}",
-            "deleted": "Ένα Reservation Item έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+            "created": "Ένα νέο Αντικείμενο έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+            "updated": "Ένα Αντικείμενο έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+            "deleted": "Ένα Αντικείμενο έχει διαγραφτεί με αναγνωριστικό {{ param }}",
             "delete": {
-                "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Reservation Item {{ id }};"
+                "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Αντικείμενο {{ id }};"
             },
             "detail": {
-                "title": "Reservation Item"
+                "title": "Αντικείμενο"
             },
-            "reservationItemName": "Reservation Item Name",
-            "reservation": "Reservation"
+            "reservationItemName": "Ονομασία",
+            "reservation": "Δέσμευση"
         }
     }
 }

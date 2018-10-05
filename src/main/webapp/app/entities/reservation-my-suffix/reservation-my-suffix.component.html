@@ -28,24 +28,30 @@
     <div class="table-responsive" *ngIf="reservations">
         <table class="table table-striped">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="reservationEntryUser"><span jhiTranslate="reservationsystemApp.reservation.reservationEntryUser">Reservation Entry User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="reservationEntryTimestamp"><span jhiTranslate="reservationsystemApp.reservation.reservationEntryTimestamp">Reservation Entry Timestamp</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="reservationItem.id"><span jhiTranslate="reservationsystemApp.reservation.reservationItem">Reservation Item</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="reservationUser"><span jhiTranslate="reservationsystemApp.reservation.reservationUser">Reservation User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="reservationStartTimestamp"><span jhiTranslate="reservationsystemApp.reservation.reservationStartTimestamp">Reservation Start Timestamp</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="reservationEndTimestamp"><span jhiTranslate="reservationsystemApp.reservation.reservationEndTimestamp">Reservation End Timestamp</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="reservationEntryUser"><span jhiTranslate="reservationsystemApp.reservation.reservationEntryUser">Reservation Entry User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="reservationEntryTimestamp"><span jhiTranslate="reservationsystemApp.reservation.reservationEntryTimestamp">Reservation Entry Timestamp</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
-            <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
+            <tbody>
             <tr *ngFor="let reservation of reservations ;trackBy: trackId">
                 <td><a [routerLink]="['/reservation-my-suffix', reservation.id, 'view' ]">{{reservation.id}}</a></td>
-                <td>{{reservation.reservationEntryUser}}</td>
-                <td>{{reservation.reservationEntryTimestamp | date:'medium'}}</td>
+                <td>
+                    <div *ngIf="reservation.reservationItem">
+                        <a [routerLink]="['../reservation-item-my-suffix', reservation.reservationItem?.id, 'view' ]" >{{reservation.reservationItem?.reservationItemName}}</a>
+                    </div>
+                </td>
                 <td>{{reservation.reservationUser}}</td>
                 <td>{{reservation.reservationStartTimestamp | date:'medium'}}</td>
                 <td>{{reservation.reservationEndTimestamp | date:'medium'}}</td>
+                <td>{{reservation.reservationEntryUser}}</td>
+                <td>{{reservation.reservationEntryTimestamp | date:'medium'}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
@@ -74,8 +80,15 @@
             </tbody>
         </table>
     </div>
+    <div *ngIf="reservations && reservations.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
 </div>
-
 <ng-template #modalContent let-close="close">
   <div class="modal-header">
     <h5 class="modal-title">Event action occurred</h5>

@@ -73,12 +73,6 @@ public class ReservationQueryService extends QueryService<Reservation> {
             if (criteria.getId() != null) {
                 specification = specification.and(buildSpecification(criteria.getId(), Reservation_.id));
             }
-            if (criteria.getReservationEntryUser() != null) {
-                specification = specification.and(buildStringSpecification(criteria.getReservationEntryUser(), Reservation_.reservationEntryUser));
-            }
-            if (criteria.getReservationEntryTimestamp() != null) {
-                specification = specification.and(buildRangeSpecification(criteria.getReservationEntryTimestamp(), Reservation_.reservationEntryTimestamp));
-            }
             if (criteria.getReservationUser() != null) {
                 specification = specification.and(buildStringSpecification(criteria.getReservationUser(), Reservation_.reservationUser));
             }
@@ -88,8 +82,14 @@ public class ReservationQueryService extends QueryService<Reservation> {
             if (criteria.getReservationEndTimestamp() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getReservationEndTimestamp(), Reservation_.reservationEndTimestamp));
             }
+            if (criteria.getReservationEntryUser() != null) {
+                specification = specification.and(buildStringSpecification(criteria.getReservationEntryUser(), Reservation_.reservationEntryUser));
+            }
+            if (criteria.getReservationEntryTimestamp() != null) {
+                specification = specification.and(buildRangeSpecification(criteria.getReservationEntryTimestamp(), Reservation_.reservationEntryTimestamp));
+            }
             if (criteria.getReservationItemId() != null) {
-                specification = specification.and(buildReferringEntitySpecification(criteria.getReservationItemId(), Reservation_.reservationItems, ReservationItem_.id));
+                specification = specification.and(buildReferringEntitySpecification(criteria.getReservationItemId(), Reservation_.reservationItem, ReservationItem_.id));
             }
         }
         return specification;

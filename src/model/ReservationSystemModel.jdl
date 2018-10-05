@@ -1,10 +1,10 @@
 entity Reservation
 {
-    reservationEntryUser String,
-	reservationEntryTimestamp Instant,
-    reservationUser String,
+	reservationUser String,
     reservationStartTimestamp Instant,
-    reservationEndTimestamp Instant  
+    reservationEndTimestamp Instant,
+    reservationEntryUser String,
+	reservationEntryTimestamp Instant
 }
 
 entity ReservationItem
@@ -12,11 +12,11 @@ entity ReservationItem
 	reservationItemName String required
 }
 
-relationship ManyToMany {
-	Reservation{reservationItem} to ReservationItem{reservation}
+relationship OneToMany {
+	ReservationItem{reservation} to Reservation{reservationItem}
 }
 
-paginate Reservation, ReservationItem with infinite-scroll
+paginate Reservation, ReservationItem with pagination
 
 // It is disabled because of failed to parse id on elasticsearch issue
 filter Reservation, ReservationItem

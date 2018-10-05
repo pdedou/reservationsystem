@@ -23,7 +23,7 @@ const ENTITY_STATES = [...reservationRoute, ...reservationPopupRoute];
 
 @NgModule({
     imports: [ReservationsystemSharedModule,
-	    CommonModule,
+      CommonModule,
         FormsModule,
         NgbModalModule,
         FlatpickrModule.forRoot(),
@@ -31,7 +31,7 @@ const ENTITY_STATES = [...reservationRoute, ...reservationPopupRoute];
           provide: DateAdapter,
           useFactory: adapterFactory
         }),
-		RouterModule.forChild(ENTITY_STATES)],
+    RouterModule.forChild(ENTITY_STATES)],
     declarations: [
         ReservationMySuffixComponent,
         ReservationMySuffixDetailComponent,

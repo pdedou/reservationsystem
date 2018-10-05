@@ -33,8 +33,7 @@ public class ReservationItem implements Serializable {
     @Column(name = "reservation_item_name", nullable = false)
     private String reservationItemName;
 
-    @ManyToMany(mappedBy = "reservationItems")
-    @JsonIgnore
+    @OneToMany(mappedBy = "reservationItem")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Reservation> reservations = new HashSet<>();
 
@@ -71,13 +70,13 @@ public class ReservationItem implements Serializable {
 
     public ReservationItem addReservation(Reservation reservation) {
         this.reservations.add(reservation);
-        reservation.getReservationItems().add(this);
+        reservation.setReservationItem(this);
         return this;
     }
 
     public ReservationItem removeReservation(Reservation reservation) {
         this.reservations.remove(reservation);
-        reservation.getReservationItems().remove(this);
+        reservation.setReservationItem(null);
         return this;
     }
 

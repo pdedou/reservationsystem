@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
+import { JhiPaginationUtil, JhiResolvePagingParams } from 'ng-jhipster';
 import { UserRouteAccessService } from 'app/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -29,8 +30,12 @@ export const reservationRoute: Routes = [
     {
         path: 'reservation-my-suffix',
         component: ReservationMySuffixComponent,
+        resolve: {
+            pagingParams: JhiResolvePagingParams
+        },
         data: {
             authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
             pageTitle: 'reservationsystemApp.reservation.home.title'
         },
         canActivate: [UserRouteAccessService]

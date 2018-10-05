@@ -14,7 +14,6 @@ import org.hcmr.reservationsystem.service.ReservationQueryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,12 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ReservationsystemApp.class)
 public class ReservationResourceIntTest {
 
-    private static final String DEFAULT_RESERVATION_ENTRY_USER = "AAAAAAAAAA";
-    private static final String UPDATED_RESERVATION_ENTRY_USER = "BBBBBBBBBB";
-
-    private static final Instant DEFAULT_RESERVATION_ENTRY_TIMESTAMP = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_RESERVATION_ENTRY_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-
     private static final String DEFAULT_RESERVATION_USER = "AAAAAAAAAA";
     private static final String UPDATED_RESERVATION_USER = "BBBBBBBBBB";
 
@@ -68,16 +60,15 @@ public class ReservationResourceIntTest {
     private static final Instant DEFAULT_RESERVATION_END_TIMESTAMP = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_RESERVATION_END_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
+    private static final String DEFAULT_RESERVATION_ENTRY_USER = "AAAAAAAAAA";
+    private static final String UPDATED_RESERVATION_ENTRY_USER = "BBBBBBBBBB";
+
+    private static final Instant DEFAULT_RESERVATION_ENTRY_TIMESTAMP = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_RESERVATION_ENTRY_TIMESTAMP = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
     @Autowired
     private ReservationRepository reservationRepository;
-
-    @Mock
-    private ReservationRepository reservationRepositoryMock;
     
-
-    @Mock
-    private ReservationService reservationServiceMock;
-
     @Autowired
     private ReservationService reservationService;
 
@@ -127,11 +118,11 @@ public class ReservationResourceIntTest {
      */
     public static Reservation createEntity(EntityManager em) {
         Reservation reservation = new Reservation()
-            .reservationEntryUser(DEFAULT_RESERVATION_ENTRY_USER)
-            .reservationEntryTimestamp(DEFAULT_RESERVATION_ENTRY_TIMESTAMP)
             .reservationUser(DEFAULT_RESERVATION_USER)
             .reservationStartTimestamp(DEFAULT_RESERVATION_START_TIMESTAMP)
-            .reservationEndTimestamp(DEFAULT_RESERVATION_END_TIMESTAMP);
+            .reservationEndTimestamp(DEFAULT_RESERVATION_END_TIMESTAMP)
+            .reservationEntryUser(DEFAULT_RESERVATION_ENTRY_USER)
+            .reservationEntryTimestamp(DEFAULT_RESERVATION_ENTRY_TIMESTAMP);
         return reservation;
     }
 
@@ -155,11 +146,11 @@ public class ReservationResourceIntTest {
         List<Reservation> reservationList = reservationRepository.findAll();
         assertThat(reservationList).hasSize(databaseSizeBeforeCreate + 1);
         Reservation testReservation = reservationList.get(reservationList.size() - 1);
-        assertThat(testReservation.getReservationEntryUser()).isEqualTo(DEFAULT_RESERVATION_ENTRY_USER);
-        assertThat(testReservation.getReservationEntryTimestamp()).isEqualTo(DEFAULT_RESERVATION_ENTRY_TIMESTAMP);
         assertThat(testReservation.getReservationUser()).isEqualTo(DEFAULT_RESERVATION_USER);
         assertThat(testReservation.getReservationStartTimestamp()).isEqualTo(DEFAULT_RESERVATION_START_TIMESTAMP);
         assertThat(testReservation.getReservationEndTimestamp()).isEqualTo(DEFAULT_RESERVATION_END_TIMESTAMP);
+        assertThat(testReservation.getReservationEntryUser()).isEqualTo(DEFAULT_RESERVATION_ENTRY_USER);
+        assertThat(testReservation.getReservationEntryTimestamp()).isEqualTo(DEFAULT_RESERVATION_ENTRY_TIMESTAMP);
 
         // Validate the Reservation in Elasticsearch
         verify(mockReservationSearchRepository, times(1)).save(testReservation);
@@ -198,44 +189,13 @@ public class ReservationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
-            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
-            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].reservationUser").value(hasItem(DEFAULT_RESERVATION_USER.toString())))
             .andExpect(jsonPath("$.[*].reservationStartTimestamp").value(hasItem(DEFAULT_RESERVATION_START_TIMESTAMP.toString())))
-            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())));
+            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())));
     }
     
-    public void getAllReservationsWithEagerRelationshipsIsEnabled() throws Exception {
-        ReservationResource reservationResource = new ReservationResource(reservationServiceMock, reservationQueryService);
-        when(reservationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-
-        MockMvc restReservationMockMvc = MockMvcBuilders.standaloneSetup(reservationResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
-
-        restReservationMockMvc.perform(get("/api/reservations?eagerload=true"))
-        .andExpect(status().isOk());
-
-        verify(reservationServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
-    public void getAllReservationsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        ReservationResource reservationResource = new ReservationResource(reservationServiceMock, reservationQueryService);
-            when(reservationServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-            MockMvc restReservationMockMvc = MockMvcBuilders.standaloneSetup(reservationResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
-
-        restReservationMockMvc.perform(get("/api/reservations?eagerload=true"))
-        .andExpect(status().isOk());
-
-            verify(reservationServiceMock, times(1)).findAllWithEagerRelationships(any());
-    }
-
     @Test
     @Transactional
     public void getReservation() throws Exception {
@@ -247,89 +207,11 @@ public class ReservationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(reservation.getId().intValue()))
-            .andExpect(jsonPath("$.reservationEntryUser").value(DEFAULT_RESERVATION_ENTRY_USER.toString()))
-            .andExpect(jsonPath("$.reservationEntryTimestamp").value(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString()))
             .andExpect(jsonPath("$.reservationUser").value(DEFAULT_RESERVATION_USER.toString()))
             .andExpect(jsonPath("$.reservationStartTimestamp").value(DEFAULT_RESERVATION_START_TIMESTAMP.toString()))
-            .andExpect(jsonPath("$.reservationEndTimestamp").value(DEFAULT_RESERVATION_END_TIMESTAMP.toString()));
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryUserIsEqualToSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryUser equals to DEFAULT_RESERVATION_ENTRY_USER
-        defaultReservationShouldBeFound("reservationEntryUser.equals=" + DEFAULT_RESERVATION_ENTRY_USER);
-
-        // Get all the reservationList where reservationEntryUser equals to UPDATED_RESERVATION_ENTRY_USER
-        defaultReservationShouldNotBeFound("reservationEntryUser.equals=" + UPDATED_RESERVATION_ENTRY_USER);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryUserIsInShouldWork() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryUser in DEFAULT_RESERVATION_ENTRY_USER or UPDATED_RESERVATION_ENTRY_USER
-        defaultReservationShouldBeFound("reservationEntryUser.in=" + DEFAULT_RESERVATION_ENTRY_USER + "," + UPDATED_RESERVATION_ENTRY_USER);
-
-        // Get all the reservationList where reservationEntryUser equals to UPDATED_RESERVATION_ENTRY_USER
-        defaultReservationShouldNotBeFound("reservationEntryUser.in=" + UPDATED_RESERVATION_ENTRY_USER);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryUserIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryUser is not null
-        defaultReservationShouldBeFound("reservationEntryUser.specified=true");
-
-        // Get all the reservationList where reservationEntryUser is null
-        defaultReservationShouldNotBeFound("reservationEntryUser.specified=false");
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryTimestampIsEqualToSomething() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryTimestamp equals to DEFAULT_RESERVATION_ENTRY_TIMESTAMP
-        defaultReservationShouldBeFound("reservationEntryTimestamp.equals=" + DEFAULT_RESERVATION_ENTRY_TIMESTAMP);
-
-        // Get all the reservationList where reservationEntryTimestamp equals to UPDATED_RESERVATION_ENTRY_TIMESTAMP
-        defaultReservationShouldNotBeFound("reservationEntryTimestamp.equals=" + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryTimestampIsInShouldWork() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryTimestamp in DEFAULT_RESERVATION_ENTRY_TIMESTAMP or UPDATED_RESERVATION_ENTRY_TIMESTAMP
-        defaultReservationShouldBeFound("reservationEntryTimestamp.in=" + DEFAULT_RESERVATION_ENTRY_TIMESTAMP + "," + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
-
-        // Get all the reservationList where reservationEntryTimestamp equals to UPDATED_RESERVATION_ENTRY_TIMESTAMP
-        defaultReservationShouldNotBeFound("reservationEntryTimestamp.in=" + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
-    }
-
-    @Test
-    @Transactional
-    public void getAllReservationsByReservationEntryTimestampIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        reservationRepository.saveAndFlush(reservation);
-
-        // Get all the reservationList where reservationEntryTimestamp is not null
-        defaultReservationShouldBeFound("reservationEntryTimestamp.specified=true");
-
-        // Get all the reservationList where reservationEntryTimestamp is null
-        defaultReservationShouldNotBeFound("reservationEntryTimestamp.specified=false");
+            .andExpect(jsonPath("$.reservationEndTimestamp").value(DEFAULT_RESERVATION_END_TIMESTAMP.toString()))
+            .andExpect(jsonPath("$.reservationEntryUser").value(DEFAULT_RESERVATION_ENTRY_USER.toString()))
+            .andExpect(jsonPath("$.reservationEntryTimestamp").value(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString()));
     }
 
     @Test
@@ -451,12 +333,90 @@ public class ReservationResourceIntTest {
 
     @Test
     @Transactional
+    public void getAllReservationsByReservationEntryUserIsEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryUser equals to DEFAULT_RESERVATION_ENTRY_USER
+        defaultReservationShouldBeFound("reservationEntryUser.equals=" + DEFAULT_RESERVATION_ENTRY_USER);
+
+        // Get all the reservationList where reservationEntryUser equals to UPDATED_RESERVATION_ENTRY_USER
+        defaultReservationShouldNotBeFound("reservationEntryUser.equals=" + UPDATED_RESERVATION_ENTRY_USER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByReservationEntryUserIsInShouldWork() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryUser in DEFAULT_RESERVATION_ENTRY_USER or UPDATED_RESERVATION_ENTRY_USER
+        defaultReservationShouldBeFound("reservationEntryUser.in=" + DEFAULT_RESERVATION_ENTRY_USER + "," + UPDATED_RESERVATION_ENTRY_USER);
+
+        // Get all the reservationList where reservationEntryUser equals to UPDATED_RESERVATION_ENTRY_USER
+        defaultReservationShouldNotBeFound("reservationEntryUser.in=" + UPDATED_RESERVATION_ENTRY_USER);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByReservationEntryUserIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryUser is not null
+        defaultReservationShouldBeFound("reservationEntryUser.specified=true");
+
+        // Get all the reservationList where reservationEntryUser is null
+        defaultReservationShouldNotBeFound("reservationEntryUser.specified=false");
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByReservationEntryTimestampIsEqualToSomething() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryTimestamp equals to DEFAULT_RESERVATION_ENTRY_TIMESTAMP
+        defaultReservationShouldBeFound("reservationEntryTimestamp.equals=" + DEFAULT_RESERVATION_ENTRY_TIMESTAMP);
+
+        // Get all the reservationList where reservationEntryTimestamp equals to UPDATED_RESERVATION_ENTRY_TIMESTAMP
+        defaultReservationShouldNotBeFound("reservationEntryTimestamp.equals=" + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByReservationEntryTimestampIsInShouldWork() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryTimestamp in DEFAULT_RESERVATION_ENTRY_TIMESTAMP or UPDATED_RESERVATION_ENTRY_TIMESTAMP
+        defaultReservationShouldBeFound("reservationEntryTimestamp.in=" + DEFAULT_RESERVATION_ENTRY_TIMESTAMP + "," + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
+
+        // Get all the reservationList where reservationEntryTimestamp equals to UPDATED_RESERVATION_ENTRY_TIMESTAMP
+        defaultReservationShouldNotBeFound("reservationEntryTimestamp.in=" + UPDATED_RESERVATION_ENTRY_TIMESTAMP);
+    }
+
+    @Test
+    @Transactional
+    public void getAllReservationsByReservationEntryTimestampIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        reservationRepository.saveAndFlush(reservation);
+
+        // Get all the reservationList where reservationEntryTimestamp is not null
+        defaultReservationShouldBeFound("reservationEntryTimestamp.specified=true");
+
+        // Get all the reservationList where reservationEntryTimestamp is null
+        defaultReservationShouldNotBeFound("reservationEntryTimestamp.specified=false");
+    }
+
+    @Test
+    @Transactional
     public void getAllReservationsByReservationItemIsEqualToSomething() throws Exception {
         // Initialize the database
         ReservationItem reservationItem = ReservationItemResourceIntTest.createEntity(em);
         em.persist(reservationItem);
         em.flush();
-        reservation.addReservationItem(reservationItem);
+        reservation.setReservationItem(reservationItem);
         reservationRepository.saveAndFlush(reservation);
         Long reservationItemId = reservationItem.getId();
 
@@ -475,11 +435,11 @@ public class ReservationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
-            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
-            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].reservationUser").value(hasItem(DEFAULT_RESERVATION_USER.toString())))
             .andExpect(jsonPath("$.[*].reservationStartTimestamp").value(hasItem(DEFAULT_RESERVATION_START_TIMESTAMP.toString())))
-            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())));
+            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())));
     }
 
     /**
@@ -517,11 +477,11 @@ public class ReservationResourceIntTest {
         // Disconnect from session so that the updates on updatedReservation are not directly saved in db
         em.detach(updatedReservation);
         updatedReservation
-            .reservationEntryUser(UPDATED_RESERVATION_ENTRY_USER)
-            .reservationEntryTimestamp(UPDATED_RESERVATION_ENTRY_TIMESTAMP)
             .reservationUser(UPDATED_RESERVATION_USER)
             .reservationStartTimestamp(UPDATED_RESERVATION_START_TIMESTAMP)
-            .reservationEndTimestamp(UPDATED_RESERVATION_END_TIMESTAMP);
+            .reservationEndTimestamp(UPDATED_RESERVATION_END_TIMESTAMP)
+            .reservationEntryUser(UPDATED_RESERVATION_ENTRY_USER)
+            .reservationEntryTimestamp(UPDATED_RESERVATION_ENTRY_TIMESTAMP);
 
         restReservationMockMvc.perform(put("/api/reservations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -532,11 +492,11 @@ public class ReservationResourceIntTest {
         List<Reservation> reservationList = reservationRepository.findAll();
         assertThat(reservationList).hasSize(databaseSizeBeforeUpdate);
         Reservation testReservation = reservationList.get(reservationList.size() - 1);
-        assertThat(testReservation.getReservationEntryUser()).isEqualTo(UPDATED_RESERVATION_ENTRY_USER);
-        assertThat(testReservation.getReservationEntryTimestamp()).isEqualTo(UPDATED_RESERVATION_ENTRY_TIMESTAMP);
         assertThat(testReservation.getReservationUser()).isEqualTo(UPDATED_RESERVATION_USER);
         assertThat(testReservation.getReservationStartTimestamp()).isEqualTo(UPDATED_RESERVATION_START_TIMESTAMP);
         assertThat(testReservation.getReservationEndTimestamp()).isEqualTo(UPDATED_RESERVATION_END_TIMESTAMP);
+        assertThat(testReservation.getReservationEntryUser()).isEqualTo(UPDATED_RESERVATION_ENTRY_USER);
+        assertThat(testReservation.getReservationEntryTimestamp()).isEqualTo(UPDATED_RESERVATION_ENTRY_TIMESTAMP);
 
         // Validate the Reservation in Elasticsearch
         verify(mockReservationSearchRepository, times(1)).save(testReservation);
@@ -596,11 +556,11 @@ public class ReservationResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(reservation.getId().intValue())))
-            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
-            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())))
             .andExpect(jsonPath("$.[*].reservationUser").value(hasItem(DEFAULT_RESERVATION_USER.toString())))
             .andExpect(jsonPath("$.[*].reservationStartTimestamp").value(hasItem(DEFAULT_RESERVATION_START_TIMESTAMP.toString())))
-            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())));
+            .andExpect(jsonPath("$.[*].reservationEndTimestamp").value(hasItem(DEFAULT_RESERVATION_END_TIMESTAMP.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryUser").value(hasItem(DEFAULT_RESERVATION_ENTRY_USER.toString())))
+            .andExpect(jsonPath("$.[*].reservationEntryTimestamp").value(hasItem(DEFAULT_RESERVATION_ENTRY_TIMESTAMP.toString())));
     }
 
     @Test

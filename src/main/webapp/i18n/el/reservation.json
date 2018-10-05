@@ -3,26 +3,26 @@
     "reservationsystemApp": {
         "reservation" : {
             "home": {
-                "title": "Reservations",
-                "createLabel": "Δημιουργήστε ένα νέο Reservation",
-                "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε ένα Reservation",
-                "search": "Αναζήτηση για Reservation"
+                "title": "Δεσμεύσεις",
+                "createLabel": "Δημιουργήστε μία νέα Δέσμευση",
+                "createOrEditLabel": "Δημιουργήστε η επεξεργαστείτε μία Δέσμευση",
+                "search": "Αναζήτηση για Δέσμευση"
             },
-            "created": "Ένα νέο Reservation έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
-            "updated": "Ένα Reservation έχει ενημερωθεί με αναγνωριστικό {{ param }}",
-            "deleted": "Ένα Reservation έχει διαγραφτεί με αναγνωριστικό {{ param }}",
+            "created": "Μία νέα Δέσμευση έχει δημιουργηθεί με αναγνωριστικό {{ param }}",
+            "updated": "Μία Δέσμευση έχει ενημερωθεί με αναγνωριστικό {{ param }}",
+            "deleted": "Μία Δέσμευση έχει διαγραφτεί με αναγνωριστικό {{ param }}",
             "delete": {
-                "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε το ακόλουθο Reservation {{ id }};"
+                "question": "Είστε βέβαιοι όταν θέλετε να διαγράψετε την ακόλουθη Δέσμευση {{ id }};"
             },
             "detail": {
-                "title": "Reservation"
+                "title": "Δέσμευση"
             },
+            "reservationUser": "Χρήστης",
+            "reservationStartTimestamp": "Ημερομηνία Έναρξης",
+            "reservationEndTimestamp": "Ημερομηνία Λήξης",
             "reservationEntryUser": "Reservation Entry User",
             "reservationEntryTimestamp": "Reservation Entry Timestamp",
-            "reservationUser": "Reservation User",
-            "reservationStartTimestamp": "Reservation Start Timestamp",
-            "reservationEndTimestamp": "Reservation End Timestamp",
-            "reservationItem": "Reservation Item"
+            "reservationItem": "Αντικείμενο"
         }
     }
 }

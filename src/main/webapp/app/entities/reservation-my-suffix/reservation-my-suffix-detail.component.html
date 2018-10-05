@@ -5,13 +5,11 @@
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
-                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryUser">Reservation Entry User</span></dt>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationItem">Reservation Item</span></dt>
                 <dd>
-                    <span>{{reservation.reservationEntryUser}}</span>
-                </dd>
-                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryTimestamp">Reservation Entry Timestamp</span></dt>
-                <dd>
-                    <span>{{reservation.reservationEntryTimestamp}}</span>
+                    <div *ngIf="reservation.reservationItem">
+                        <a [routerLink]="['/reservation-item-my-suffix', reservation.reservationItem?.id, 'view']">{{reservation.reservationItem?.reservationItemName}}</a>
+                    </div>
                 </dd>
                 <dt><span jhiTranslate="reservationsystemApp.reservation.reservationUser">Reservation User</span></dt>
                 <dd>
@@ -25,11 +23,13 @@
                 <dd>
                     <span>{{reservation.reservationEndTimestamp}}</span>
                 </dd>
-                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationItem">Reservation Item</span></dt>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryUser">Reservation Entry User</span></dt>
                 <dd>
-                    <span *ngFor="let reservationItem of reservation.reservationItems; let last = last">
-                        <a [routerLink]="['/reservation-item-my-suffix', reservationItem?.id, 'view' ]">{{reservationItem.id}}</a>{{last ? '' : ', '}}
-                    </span>
+                    <span>{{reservation.reservationEntryUser}}</span>
+                </dd>
+                <dt><span jhiTranslate="reservationsystemApp.reservation.reservationEntryTimestamp">Reservation Entry Timestamp</span></dt>
+                <dd>
+                    <span>{{reservation.reservationEntryTimestamp}}</span>
                 </dd>
             </dl>
 

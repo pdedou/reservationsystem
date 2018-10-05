@@ -28,13 +28,7 @@ public interface ReservationService {
      */
     Page<Reservation> findAll(Pageable pageable);
 
-    /**
-     * Get all the Reservation with eager load of many-to-many relationships.
-     *
-     * @return the list of entities
-     */
-    Page<Reservation> findAllWithEagerRelationships(Pageable pageable);
-    
+
     /**
      * Get the "id" reservation.
      *

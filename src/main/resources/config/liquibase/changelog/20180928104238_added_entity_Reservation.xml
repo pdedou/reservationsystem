@@ -21,14 +21,6 @@
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="reservation_entry_user" type="varchar(255)">
-                <constraints nullable="true" />
-            </column>
-
-            <column name="reservation_entry_timestamp" type="datetime">
-                <constraints nullable="true" />
-            </column>
-
             <column name="reservation_user" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -41,22 +33,23 @@
                 <constraints nullable="true" />
             </column>
 
+            <column name="reservation_entry_user" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="reservation_entry_timestamp" type="datetime">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="reservation_item_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="reservation" columnName="reservation_entry_timestamp" columnDataType="datetime"/>
         <dropDefaultValue tableName="reservation" columnName="reservation_start_timestamp" columnDataType="datetime"/>
         <dropDefaultValue tableName="reservation" columnName="reservation_end_timestamp" columnDataType="datetime"/>
-        
-        <createTable tableName="reservation_reservation_item">
-            <column name="reservation_items_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="reservations_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="reservations_id, reservation_items_id" tableName="reservation_reservation_item"/>
+        <dropDefaultValue tableName="reservation" columnName="reservation_entry_timestamp" columnDataType="datetime"/>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->

@@ -25,15 +25,15 @@ public class ReservationCriteria implements Serializable {
 
     private LongFilter id;
 
-    private StringFilter reservationEntryUser;
-
-    private InstantFilter reservationEntryTimestamp;
-
     private StringFilter reservationUser;
 
     private InstantFilter reservationStartTimestamp;
 
     private InstantFilter reservationEndTimestamp;
+
+    private StringFilter reservationEntryUser;
+
+    private InstantFilter reservationEntryTimestamp;
 
     private LongFilter reservationItemId;
 
@@ -46,22 +46,6 @@ public class ReservationCriteria implements Serializable {
 
     public void setId(LongFilter id) {
         this.id = id;
-    }
-
-    public StringFilter getReservationEntryUser() {
-        return reservationEntryUser;
-    }
-
-    public void setReservationEntryUser(StringFilter reservationEntryUser) {
-        this.reservationEntryUser = reservationEntryUser;
-    }
-
-    public InstantFilter getReservationEntryTimestamp() {
-        return reservationEntryTimestamp;
-    }
-
-    public void setReservationEntryTimestamp(InstantFilter reservationEntryTimestamp) {
-        this.reservationEntryTimestamp = reservationEntryTimestamp;
     }
 
     public StringFilter getReservationUser() {
@@ -88,6 +72,22 @@ public class ReservationCriteria implements Serializable {
         this.reservationEndTimestamp = reservationEndTimestamp;
     }
 
+    public StringFilter getReservationEntryUser() {
+        return reservationEntryUser;
+    }
+
+    public void setReservationEntryUser(StringFilter reservationEntryUser) {
+        this.reservationEntryUser = reservationEntryUser;
+    }
+
+    public InstantFilter getReservationEntryTimestamp() {
+        return reservationEntryTimestamp;
+    }
+
+    public void setReservationEntryTimestamp(InstantFilter reservationEntryTimestamp) {
+        this.reservationEntryTimestamp = reservationEntryTimestamp;
+    }
+
     public LongFilter getReservationItemId() {
         return reservationItemId;
     }
@@ -108,11 +108,11 @@ public class ReservationCriteria implements Serializable {
         final ReservationCriteria that = (ReservationCriteria) o;
         return
             Objects.equals(id, that.id) &&
-            Objects.equals(reservationEntryUser, that.reservationEntryUser) &&
-            Objects.equals(reservationEntryTimestamp, that.reservationEntryTimestamp) &&
             Objects.equals(reservationUser, that.reservationUser) &&
             Objects.equals(reservationStartTimestamp, that.reservationStartTimestamp) &&
             Objects.equals(reservationEndTimestamp, that.reservationEndTimestamp) &&
+            Objects.equals(reservationEntryUser, that.reservationEntryUser) &&
+            Objects.equals(reservationEntryTimestamp, that.reservationEntryTimestamp) &&
             Objects.equals(reservationItemId, that.reservationItemId);
     }
 
@@ -120,11 +120,11 @@ public class ReservationCriteria implements Serializable {
     public int hashCode() {
         return Objects.hash(
         id,
-        reservationEntryUser,
-        reservationEntryTimestamp,
         reservationUser,
         reservationStartTimestamp,
         reservationEndTimestamp,
+        reservationEntryUser,
+        reservationEntryTimestamp,
         reservationItemId
         );
     }
@@ -133,11 +133,11 @@ public class ReservationCriteria implements Serializable {
     public String toString() {
         return "ReservationCriteria{" +
                 (id != null ? "id=" + id + ", " : "") +
-                (reservationEntryUser != null ? "reservationEntryUser=" + reservationEntryUser + ", " : "") +
-                (reservationEntryTimestamp != null ? "reservationEntryTimestamp=" + reservationEntryTimestamp + ", " : "") +
                 (reservationUser != null ? "reservationUser=" + reservationUser + ", " : "") +
                 (reservationStartTimestamp != null ? "reservationStartTimestamp=" + reservationStartTimestamp + ", " : "") +
                 (reservationEndTimestamp != null ? "reservationEndTimestamp=" + reservationEndTimestamp + ", " : "") +
+                (reservationEntryUser != null ? "reservationEntryUser=" + reservationEntryUser + ", " : "") +
+                (reservationEntryTimestamp != null ? "reservationEntryTimestamp=" + reservationEntryTimestamp + ", " : "") +
                 (reservationItemId != null ? "reservationItemId=" + reservationItemId + ", " : "") +
             "}";
     }

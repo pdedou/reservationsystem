@@ -2,14 +2,6 @@
     "name": "Reservation",
     "fields": [
         {
-            "fieldName": "reservationEntryUser",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "reservationEntryTimestamp",
-            "fieldType": "Instant"
-        },
-        {
             "fieldName": "reservationUser",
             "fieldType": "String"
         },
@@ -20,22 +12,28 @@
         {
             "fieldName": "reservationEndTimestamp",
             "fieldType": "Instant"
+        },
+        {
+            "fieldName": "reservationEntryUser",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "reservationEntryTimestamp",
+            "fieldType": "Instant"
         }
     ],
     "relationships": [
         {
-            "relationshipType": "many-to-many",
-            "otherEntityRelationshipName": "reservation",
+            "relationshipType": "many-to-one",
             "relationshipName": "reservationItem",
             "otherEntityName": "reservationItem",
-            "otherEntityField": "id",
-            "ownerSide": true
+            "otherEntityField": "id"
         }
     ],
     "changelogDate": "20180928104238",
     "entityTableName": "reservation",
     "dto": "no",
-    "pagination": "infinite-scroll",
+    "pagination": "pagination",
     "service": "serviceImpl",
     "jpaMetamodelFiltering": true,
     "fluentMethods": true,

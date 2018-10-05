@@ -60,15 +60,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findAll(pageable);
     }
 
-    /**
-     * Get all the Reservation with eager load of many-to-many relationships.
-     *
-     * @return the list of entities
-     */
-    public Page<Reservation> findAllWithEagerRelationships(Pageable pageable) {
-        return reservationRepository.findAllWithEagerRelationships(pageable);
-    }
-    
 
     /**
      * Get one reservation by id.
@@ -80,7 +71,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     public Optional<Reservation> findOne(Long id) {
         log.debug("Request to get Reservation : {}", id);
-        return reservationRepository.findOneWithEagerRelationships(id);
+        return reservationRepository.findById(id);
     }
 
     /**

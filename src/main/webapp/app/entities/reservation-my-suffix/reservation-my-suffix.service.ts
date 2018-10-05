@@ -59,10 +59,6 @@ export class ReservationMySuffixService {
 
     private convertDateFromClient(reservation: IReservationMySuffix): IReservationMySuffix {
         const copy: IReservationMySuffix = Object.assign({}, reservation, {
-            reservationEntryTimestamp:
-                reservation.reservationEntryTimestamp != null && reservation.reservationEntryTimestamp.isValid()
-                    ? reservation.reservationEntryTimestamp.toJSON()
-                    : null,
             reservationStartTimestamp:
                 reservation.reservationStartTimestamp != null && reservation.reservationStartTimestamp.isValid()
                     ? reservation.reservationStartTimestamp.toJSON()
@@ -70,28 +66,31 @@ export class ReservationMySuffixService {
             reservationEndTimestamp:
                 reservation.reservationEndTimestamp != null && reservation.reservationEndTimestamp.isValid()
                     ? reservation.reservationEndTimestamp.toJSON()
+                    : null,
+            reservationEntryTimestamp:
+                reservation.reservationEntryTimestamp != null && reservation.reservationEntryTimestamp.isValid()
+                    ? reservation.reservationEntryTimestamp.toJSON()
                     : null
         });
         return copy;
     }
 
     private convertDateFromServer(res: EntityResponseType): EntityResponseType {
-        res.body.reservationEntryTimestamp = res.body.reservationEntryTimestamp != null ? moment(res.body.reservationEntryTimestamp) : null;
         res.body.reservationStartTimestamp = res.body.reservationStartTimestamp != null ? moment(res.body.reservationStartTimestamp) : null;
         res.body.reservationEndTimestamp = res.body.reservationEndTimestamp != null ? moment(res.body.reservationEndTimestamp) : null;
+        res.body.reservationEntryTimestamp = res.body.reservationEntryTimestamp != null ? moment(res.body.reservationEntryTimestamp) : null;
         return res;
     }
 
     private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
         res.body.forEach((reservation: IReservationMySuffix) => {
-            reservation.reservationEntryTimestamp =
-                reservation.reservationEntryTimestamp != null ? moment(reservation.reservationEntryTimestamp) : null;
             reservation.reservationStartTimestamp =
                 reservation.reservationStartTimestamp != null ? moment(reservation.reservationStartTimestamp) : null;
             reservation.reservationEndTimestamp =
                 reservation.reservationEndTimestamp != null ? moment(reservation.reservationEndTimestamp) : null;
+            reservation.reservationEntryTimestamp =
+                reservation.reservationEntryTimestamp != null ? moment(reservation.reservationEntryTimestamp) : null;
         });
         return res;
     }
-
 }

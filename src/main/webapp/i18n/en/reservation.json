@@ -17,11 +17,11 @@
             "detail": {
                 "title": "Reservation"
             },
-            "reservationEntryUser": "Reservation Entry User",
-            "reservationEntryTimestamp": "Reservation Entry Timestamp",
             "reservationUser": "Reservation User",
             "reservationStartTimestamp": "Reservation Start Timestamp",
             "reservationEndTimestamp": "Reservation End Timestamp",
+            "reservationEntryUser": "Reservation Entry User",
+            "reservationEntryTimestamp": "Reservation Entry Timestamp",
             "reservationItem": "Reservation Item"
         }
     }

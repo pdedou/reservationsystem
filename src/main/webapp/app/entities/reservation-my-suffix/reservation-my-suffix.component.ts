@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
@@ -23,7 +23,8 @@ import {
     endOfMonth,
     isSameDay,
     isSameMonth,
-    addHours
+    addHours,
+    format
 } from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -62,15 +63,18 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
 
     reservations: IReservationMySuffix[];
     currentAccount: any;
+    success: any;
     eventSubscriber: Subscription;
-    itemsPerPage: number;
+    currentSearch: string;
+    routeData: any;
     links: any;
+    totalItems: any;
+    queryCount: any;
+    itemsPerPage: any;
     page: any;
     predicate: any;
-    queryCount: any;
+    previousPage: any;
     reverse: any;
-    totalItems: number;
-    currentSearch: string;
 
     modalData: {
         action: string;
@@ -95,65 +99,26 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
 
     refresh: Subject<any> = new Subject();
 
-    events: CalendarEvent[] = [
-    {
-        start: subDays(startOfDay(new Date()), 1),
-        end: addDays(new Date(), 1),
-        title: 'A 3 day event',
-        color: colors.red,
-        actions: this.actions,
-        allDay: true,
-        resizable: {
-        beforeStart: true,
-        afterEnd: true
-    },
-    draggable: true
-    },
-    {
-        start: startOfDay(new Date()),
-        title: 'An event with no end date',
-        color: colors.yellow,
-        actions: this.actions
-    },
-    {
-        start: subDays(endOfMonth(new Date()), 3),
-        end: addDays(endOfMonth(new Date()), 3),
-        title: 'A long event that spans 2 months',
-        color: colors.blue,
-        allDay: true
-    },
-    {
-        start: addHours(startOfDay(new Date()), 2),
-        end: new Date(),
-        title: 'A draggable and resizable event',
-        color: colors.yellow,
-        actions: this.actions,
-        resizable: {
-        beforeStart: true,
-        afterEnd: true
-        },
-        draggable: true
-    }
-    ];
+    events: CalendarEvent[] = [];
     activeDayIsOpen: boolean = true;
 
     constructor(
         private reservationService: ReservationMySuffixService,
-        private jhiAlertService: JhiAlertService,
-        private eventManager: JhiEventManager,
         private parseLinks: JhiParseLinks,
-        private activatedRoute: ActivatedRoute,
+        private jhiAlertService: JhiAlertService,
         private principal: Principal,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        private eventManager: JhiEventManager,
         private modal: NgbModal
     ) {
-        this.reservations = [];
         this.itemsPerPage = ITEMS_PER_PAGE;
-        this.page = 0;
-        this.links = {
-            last: 0
-        };
-        this.predicate = 'id';
-        this.reverse = true;
+        this.routeData = this.activatedRoute.data.subscribe(data => {
+            this.page = data.pagingParams.page;
+            this.previousPage = data.pagingParams.page;
+            this.reverse = data.pagingParams.ascending;
+            this.predicate = data.pagingParams.predicate;
+        });
         this.currentSearch =
             this.activatedRoute.snapshot && this.activatedRoute.snapshot.params['search']
                 ? this.activatedRoute.snapshot.params['search']
@@ -206,15 +171,14 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
     }
 
     populateCalendar() {
-      const monthEnd = endOfMonth(this.viewDate);
-//      const month = format(monthEnd, 'YYYY-MM');
-
-        this.reservations.forEach((item) => {
-          const value = item.reservationUser + item.reservationStartTimestamp + item.reservationEndTimestamp;
+        this.reservations.forEach(item => {
+          const reservationStartTimestamp = format(item.reservationStartTimestamp.toDate(), 'DD/MM/YYYY HH:mm:ss');
+          const reservationEndTimestamp = format(item.reservationEndTimestamp.toDate(), 'DD/MM/YYYY HH:mm:ss');
+          const value = item.reservationItem.reservationItemName + ' is assigned to ' + item.reservationUser + ' from ' + reservationStartTimestamp +  ' to ' + reservationEndTimestamp;
           this.events.push({
             start: item.reservationStartTimestamp.toDate(),
             end: item.reservationEndTimestamp.toDate(),
-            title: 'An event with no end date',
+            title: value,
             color: colors.yellow,
             actions: this.actions
           });
@@ -227,9 +191,10 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
       if (this.currentSearch) {
         this.reservationService
           .search({
+            page: this.page - 1,
             query: this.currentSearch,
-            page: this.page,
-            size: this.itemsPerPage
+            size: this.itemsPerPage,
+            sort: this.sort()
           })
           .subscribe(
           (res: HttpResponse<IReservationMySuffix[]>) => {
@@ -242,38 +207,48 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
       }
       this.reservationService
         .query({
-          page: this.page,
-          size: this.itemsPerPage
+          page: this.page - 1,
+          size: this.itemsPerPage,
+          sort: this.sort()
         })
         .subscribe(
         (res: HttpResponse<IReservationMySuffix[]>) => {
-            this.paginateReservations(res.body, res.headers);
-            this.populateCalendar();
-          },
+          this.paginateReservations(res.body, res.headers);
+          this.populateCalendar();
+        },
         (res: HttpErrorResponse) => this.onError(res.message)
         );
     }
 
-    reset() {
-        this.page = 0;
-        this.reservations = [];
-        this.loadAll();
+    loadPage(page: number) {
+        if (page !== this.previousPage) {
+            this.previousPage = page;
+            this.transition();
+        }
     }
 
-    loadPage(page) {
-        this.page = page;
+    transition() {
+        this.router.navigate(['/reservation-my-suffix'], {
+            queryParams: {
+                page: this.page,
+                size: this.itemsPerPage,
+                search: this.currentSearch,
+                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            }
+        });
         this.loadAll();
     }
 
     clear() {
-        this.reservations = [];
-        this.links = {
-            last: 0
-        };
         this.page = 0;
-        this.predicate = 'id';
-        this.reverse = true;
         this.currentSearch = '';
+        this.router.navigate([
+            '/reservation-my-suffix',
+            {
+                page: this.page,
+                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            }
+        ]);
         this.loadAll();
     }
 
@@ -281,14 +256,16 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
         if (!query) {
             return this.clear();
         }
-        this.reservations = [];
-        this.links = {
-            last: 0
-        };
         this.page = 0;
-        this.predicate = '_score';
-        this.reverse = false;
         this.currentSearch = query;
+        this.router.navigate([
+            '/reservation-my-suffix',
+            {
+                search: this.currentSearch,
+                page: this.page,
+                sort: this.predicate + ',' + (this.reverse ? 'asc' : 'desc')
+            }
+        ]);
         this.loadAll();
     }
 
@@ -309,7 +286,7 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
     }
 
     registerChangeInReservations() {
-        this.eventSubscriber = this.eventManager.subscribe('reservationListModification', response => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('reservationListModification', response => this.loadAll());
     }
 
     sort() {
@@ -323,9 +300,8 @@ export class ReservationMySuffixComponent implements OnInit, OnDestroy {
     private paginateReservations(data: IReservationMySuffix[], headers: HttpHeaders) {
         this.links = this.parseLinks.parse(headers.get('link'));
         this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
-        for (let i = 0; i < data.length; i++) {
-            this.reservations.push(data[i]);
-        }
+        this.queryCount = this.totalItems;
+        this.reservations = data;
     }
 
     private onError(errorMessage: string) {
